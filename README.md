@@ -269,10 +269,7 @@ musique_logs/<mode>_<embedding>_<rerank>_<timestamp>/
 |------|----|----|-------------|
 | direct | 54.0% | 63.4% | Baseline |
 | **kg_v3** | **58.0%** | **69.4%** | +6.0 F1 over baseline |
-| oracle | 66.0% | 74.2% | Upper bound |
-| kg_v3_only | 33.0% | 38.1% | KG alone (insufficient) |
 
-kg_v3 fills 55% of the direct-to-oracle gap, confirming that structured KG hints improve multi-hop reasoning.
 
 ## Configuration
 
