@@ -1,0 +1,86 @@
+{
+  "_description": "Multi-hop QA Knowledge Graph Ontology — designed for MuSiQue/HotpotQA/2WikiMultiHopQA",
+  "_version": "1.0",
+  "_design_principles": [
+    "Every node and edge carries source evidence (exact quote from text)",
+    "Entity types are domain-specific, not generic",
+    "Only factual relationships — no IS_A/SUBCLASS_OF ontology noise",
+    "Each paragraph produces a 'Paragraph' summary node for provenance tracking"
+  ],
+
+  "entity_types": {
+    "Person": {
+      "description": "A named individual (real or fictional)",
+      "key_attributes": ["full_name", "birth_date", "death_date", "nationality", "occupation"],
+      "examples": ["Steve Hillage", "Walt Disney", "Karl Maron"]
+    },
+    "Organization": {
+      "description": "A company, institution, political party, sports team, government body",
+      "key_attributes": ["name", "type", "founded", "headquarters", "country"],
+      "examples": ["Orion Pictures", "NATO", "Boston Red Sox", "University of Oxford"]
+    },
+    "Location": {
+      "description": "A geographic place: country, city, region, body of water, mountain",
+      "key_attributes": ["name", "type", "country", "coordinates"],
+      "examples": ["Sydney Harbour", "East Germany", "Fujian Province", "River Great Ouse"]
+    },
+    "CreativeWork": {
+      "description": "A film, album, book, TV show, song, painting, game",
+      "key_attributes": ["title", "creator", "year", "genre"],
+      "examples": ["Green (album)", "UHF (film)", "In the Shadow of Greatness"]
+    },
+    "Event": {
+      "description": "A historical event, war, election, ceremony, competition",
+      "key_attributes": ["name", "date", "location", "participants"],
+      "examples": ["World War II", "1936 Winter Olympics", "2010 election"]
+    },
+    "DateTime": {
+      "description": "A specific date, year, time period",
+      "key_attributes": ["value", "precision"],
+      "examples": ["1932", "July 22, 1864", "the 1950s"]
+    },
+    "Quantity": {
+      "description": "A numeric value with unit",
+      "key_attributes": ["value", "unit"],
+      "examples": ["$59,039", "8.11 million", "260,897"]
+    }
+  },
+
+  "relationship_types": {
+    "Person-related": [
+      "born_in", "died_in", "nationality", "occupation",
+      "spouse_of", "child_of", "parent_of", "sibling_of",
+      "educated_at", "employed_by", "member_of",
+      "succeeded_by", "preceded_by"
+    ],
+    "CreativeWork-related": [
+      "created_by", "directed_by", "written_by", "performed_by",
+      "produced_by", "published_by", "released_in",
+      "distributed_by", "starring", "based_on"
+    ],
+    "Organization-related": [
+      "founded_by", "founded_in", "headquartered_in",
+      "subsidiary_of", "part_of", "merged_with"
+    ],
+    "Location-related": [
+      "located_in", "capital_of", "borders",
+      "flows_into", "part_of_region"
+    ],
+    "Event-related": [
+      "occurred_in", "participated_in", "won", "lost",
+      "resulted_in", "caused_by"
+    ],
+    "General": [
+      "associated_with", "known_as", "named_after"
+    ]
+  },
+
+  "extraction_rules": [
+    "Each fact MUST have a 'source' field with the exact paragraph title it came from",
+    "Each fact MUST have an 'evidence' field with the exact sentence",
+    "Do NOT extract taxonomy/classification facts (X is a type of Y)",
+    "DO extract biographical, geographical, creative, and event facts",
+    "For multi-paragraph entities (same name in different paragraphs), merge their facts",
+    "Prioritize facts that connect entities across different paragraphs (bridge facts)"
+  ]
+}

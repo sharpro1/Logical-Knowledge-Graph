@@ -1,0 +1,2 @@
+python LKG_pipeline_1/llm_multi_backend_demo.py --provider deepseek --api_key sk-cyvyibzprjrdejgoujsmzqxraflmgockbpvnquemkpqgqrip --base_url https://api.siliconflow.cn/v1 --model deepseek-ai/DeepSeek-V2.5
+python LKG_pipeline_1/unified_demo.py llm --provider deepseek --api_key sk-cyvyibzprjrdejgoujsmzqxraflmgockbpvnquemkpqgqrip --base_url https://api.siliconflow.cn/v1 --model deepseek-ai/DeepSeek-V2.5

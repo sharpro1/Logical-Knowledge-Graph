@@ -1,0 +1,330 @@
+%%%%%%%% ICML 2026 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs} % for professional tables
+\usepackage{array}
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2026} with \usepackage[nohyperref]{icml2026} above.
+\usepackage{hyperref}
+
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+% Use the following line for the initial blind version submitted for review:
+\usepackage{icml2026}
+
+% For preprint, use
+% \usepackage[preprint]{icml2026}
+
+% If accepted, instead use the following line for the camera-ready submission:
+% \usepackage[accepted]{icml2026}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+
+
+% if you use cleveref..
+\usepackage[capitalize,noabbrev]{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Todonotes is useful during development; simply uncomment the next line
+%    and comment out the line below the next line to turn off comments
+%\usepackage[disable,textsize=tiny]{todonotes}
+\usepackage[textsize=tiny]{todonotes}
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{Submission and Formatting Instructions for ICML 2026}
+
+\begin{document}
+
+\twocolumn[
+  \icmltitle{Enhancing LLM Reasoning via Logical Knowledge Graphs \\ and Dynamic Solver Routing}
+
+  % It is OKAY to include author information, even for blind submissions: the
+  % style file will automatically remove it for you unless you've provided
+  % the [accepted] option to the icml2026 package.
+
+  % List of affiliations: The first argument should be a (short) identifier you
+  % will use later to specify author affiliations Academic affiliations
+  % should list Department, University, City, Region, Country Industry
+  % affiliations should list Company, City, Region, Country
+
+  % You can specify symbols, otherwise they are numbered in order. Ideally, you
+  % should not use this facility. Affiliations will be numbered in order of
+  % appearance and this is the preferred way.
+  \icmlsetsymbol{equal}{*}
+
+  \begin{icmlauthorlist}
+    \icmlauthor{Firstname1 Lastname1}{equal,yyy}
+    \icmlauthor{Firstname2 Lastname2}{equal,yyy,comp}
+    \icmlauthor{Firstname3 Lastname3}{comp}
+    \icmlauthor{Firstname4 Lastname4}{sch}
+    \icmlauthor{Firstname5 Lastname5}{yyy}
+    \icmlauthor{Firstname6 Lastname6}{sch,yyy,comp}
+    \icmlauthor{Firstname7 Lastname7}{comp}
+    %\icmlauthor{}{sch}
+    \icmlauthor{Firstname8 Lastname8}{sch}
+    \icmlauthor{Firstname8 Lastname8}{yyy,comp}
+    %\icmlauthor{}{sch}
+    %\icmlauthor{}{sch}
+  \end{icmlauthorlist}
+
+  \icmlaffiliation{yyy}{Department of XXX, University of YYY, Location, Country}
+  \icmlaffiliation{comp}{Company Name, Location, Country}
+  \icmlaffiliation{sch}{School of ZZZ, Institute of WWW, Location, Country}
+
+  \icmlcorrespondingauthor{Firstname1 Lastname1}{first1.last1@xxx.edu}
+  \icmlcorrespondingauthor{Firstname2 Lastname2}{first2.last2@www.uk}
+
+  % You may provide any keywords that you find helpful for describing your
+  % paper; these are used to populate the "keywords" metadata in the PDF but
+  % will not be shown in the document
+  \icmlkeywords{Machine Learning, ICML}
+
+  \vskip 0.3in
+]
+
+% this must go after the closing bracket ] following \twocolumn[ ...
+
+% This command actually creates the footnote in the first column listing the
+% affiliations and the copyright notice. The command takes one argument, which
+% is text to display at the start of the footnote. The \icmlEqualContribution
+% command is standard text for equal contribution. Remove it (just {}) if you
+% do not need this facility.
+
+% Use ONE of the following lines. DO NOT remove the command.
+% If you have no special notice, KEEP empty braces:
+\printAffiliationsAndNotice{}  % no special notice (required even if empty)
+% Or, if applicable, use the standard equal contribution text:
+% \printAffiliationsAndNotice{\icmlEqualContribution}
+
+\begin{abstract}
+
+Large Language Models (LLMs) have demonstrated remarkable proficiency in natural language understanding but struggle with strict multi-step reasoning. They frequently suffer from hallucinations and inconsistency. Existing Chain-of-Thought (CoT) methods lack rigorous verification, while traditional symbolic systems lack flexibility with natural language. To bridge this gap, we propose a Neuro-Symbolic architecture integrating Logical Knowledge Graphs (LKG) with dynamic solver routing. Unlike traditional static graphs, our LKG employs an ontology-based hierarchy that decouples abstract logic from specific entities. By treating Rules and Constraints as first-class nodes, we explicitly model complex dependencies extracted from text. We introduce a Logic Router to dynamically select the optimal symbolic engine—Z3 for constraints, Prover9 for entailment, or Pyke for inference. Combined with hybrid retrieval, our system grounds LLM generation in deterministic symbolic execution.
+
+\end{abstract}
+
+\section{Introduction}
+
+Logical reasoning—the ability to infer valid conclusions from premises using deductive, inductive, or symbolic rules—is a cornerstone of general intelligence. While Large Language Models (LLMs) have demonstrated emergent capabilities in natural language understanding \cite{brown2020language, achiam2023gpt}, they typically struggle with multi-step reasoning tasks that demand strict faithfulness and rigorous consistency \cite{huang2022towards, valmeekam2023planning}. Fundamentally, LLMs operate as probabilistic next-token predictors, relying on statistical correlations rather than causal logic. This structural limitation often leads to ``hallucinations'' \cite{zhang2023siren} and ``unfaithfulness,'' where the generated chain of thought does not accurately reflect the model's underlying decision process \cite{Turpin2023language, lanham2023measuring}. Consequently, enhancing the trustworthiness of LLMs in complex logical scenarios remains a critical, unsolved challenge in the field \cite{Dziri2023faith, Nye2021show, Huang2023large}.
+
+To mitigate these deficiencies, recent research has focused on prompt engineering and context augmentation. Strategies such as Chain-of-Thought (CoT) \cite{wei2022cot}, Self-Consistency \cite{Wang2022selfcon}, and Tree of Thoughts (ToT) \cite{Yao2023tree} attempt to elicit reasoning by decomposing problems into intermediate steps. While effective for simple tasks, these methods lack external verification; a single error in the generation chain can propagate and compound \cite{Dziri2023faith}. Parallel efforts in Retrieval-Augmented Generation (RAG) \cite{Lewis2020retrieval, Guu2020retrieval} aim to ground LLMs in external knowledge. However, standard RAG relies on vector similarity, which is often insensitive to the precise structural and logical dependencies required for deductive reasoning (e.g., distinguishing negations or conditional directions) \cite{creswell2022selection}.
+
+In contrast to unstructured text, Knowledge Graphs (KGs) provide an explicit, structured representation of entities and relationships, making them an ideal substrate for reasoning \cite{ji2021survey, pan2024unifying}. Emerging Neuro-Symbolic approaches seek to marry the semantic breadth of LLMs with the structural rigor of KGs, utilizing graphs to verify reasoning paths or guide generation \cite{Sun2023thinkongraph, Luo2023reasoningongraphs, Jiang2023StructGPT, edge2024from}. Despite this progress, traditional KGs are typically static repositories of factual triples. They rarely model abstract logical rules or constraints as first-class topological elements. This disconnect limits the ability of current systems to dynamically retrieve and reason over the logical axioms governing a domain, restricting their applicability in complex, rule-heavy environments.
+
+Driven by these insights, we propose a novel neuro-symbolic framework that integrates Logical Knowledge Graphs (LKG) with external symbolic solvers. We introduce a specialized LKG schema where logical rules and constraints are treated as first-class nodes rather than simple edge properties. This allows us to exploit the natural language understanding of LLMs to parse problems into a structured graph, and then leverage the deterministic power of external solvers to perform the actual reasoning.
+
+Our main contributions are summarized as follows:
+\begin{itemize}
+\item \textbf{The Symb-LKG Framework:} 
+We propose Symb-LKG, a novel neuro-symbolic framework that grounds LLM reasoning via Logical Knowledge Graphs (LKG) and router-guided solvers. The system workflow involves parsing natural language into an LKG to make logic explicit, retrieving a topologically connected subgraph, and dynamically routing the problem to the optimal symbolic solver (e.g., Z3, Prover9). By using the LKG as a structured intermediate representation, our approach effectively bridges the gap between neural semantic flexibility and symbolic deterministic precision.
+
+\item \textbf{Topology-Aware Logical Knowledge Graph:} 
+We introduce a dynamic LKG architecture that treats Rules and Constraints as independent nodes. Unlike static approaches, we use a ``Schema-on-Read'' strategy to build Concept-Entity hierarchies from context. This topology enables hybrid retrieval, combining vector search with graph traversal. We further refine the output via LLM pruning to construct a \textit{Logical Hull}—a complete yet minimal subgraph containing all essential premises for deduction.
+
+\item \textbf{Adaptive Logic Routing and Self-Refining Translation:} 
+We implement a meta-cognitive \textit{Logic Router} that analyzes the structural topology of the retrieved subgraph to dynamically select the optimal symbolic engine (Z3, Prover9, or Pyke). To ensure robustness, we design a feedback loop where the LLM utilizes solver error traces to refine its generated code, significantly improving the reliability of complex logical tasks.
+\end{itemize}
+
+We evaluate our framework on standard logical reasoning datasets such as FOLIO. Preliminary experimental results demonstrate that our approach significantly outperforms standard LLM prompting and baseline RAG methods, validating the efficacy of combining structured knowledge graphs with deterministic solvers for trustworthy reasoning.
+
+\section{Related Works}
+
+\textbf{Large Language Models for Logical Reasoning.} 
+Large Language Models (LLMs) show strong performance in reasoning tasks. Techniques like Chain-of-Thought (CoT) \cite{wei2022cot} and Zero-Shot CoT \cite{kojima2022zeroshot} are now standard for generating multi-step reasoning. To improve reliability, methods such as Self-Consistency \cite{Wang2022selfcon} and Tree of Thoughts (ToT) \cite{Yao2023tree} explore multiple reasoning paths. Despite these advances, pure neural models still suffer from hallucinations and ``unfaithful" explanations, meaning their generated reasons often do not match their actual decision process \cite{Turpin2023language}. Furthermore, Transformers struggle with compositional generalization, failing on multi-hop deduction problems outside their training data \cite{Dziri2023faith,Nye2021show}. Self-Correction is also difficult because models rarely catch their own logical errors without external feedback \cite{Huang2023large}. This highlights the need for robust external verification mechanisms.
+
+\textbf{Neuro-Symbolic AI and Auto-formalization.}
+Neuro-symbolic AI combines neural flexibility with symbolic rigor. A key approach is auto-formalization, where LLMs translate text into formal code \cite{Chen2022program,Gao2023pal} or logic rules \cite{Lyu2023faithful}. Systems like Logic-LM \cite{Pan2023logic} and LINC \cite{Olausson2023linc} use external solvers to execute these rules. However, most existing systems use a static strategy, assigning one solver (e.g., Z3 or Prover9) to an entire dataset. This rigid method fails on complex queries mixing arithmetic and relational logic. As shown by \cite{Lam2024closer}, tool effectiveness depends heavily on the specific structure of each problem. Our Symb-LKG solves this with Dynamic Solver Routing. Instead of using dataset-level rules, our system acts as a controller, analyzing each query at runtime to select the best solver.
+
+\textbf{Retrieval-Augmented Generation for Structured Knowledge.} Retrieval-Augmented Generation (RAG) reduces hallucinations by using external documents \cite{Lewis2020retrieval,Guu2020retrieval}. While good for simple facts, standard retrieval fails at multi-hop reasoning, which requires following logical chains rather than just matching similar words. Recent work uses Knowledge Graphs (KGs) to solve this. Methods like Think-on-Graph \cite{Sun2023thinkongraph}, RoG \cite{Luo2023reasoningongraphs}, StructGPT \cite{Jiang2023StructGPT} and GraphRAG\cite{edge2024from}  guide LLMs through graph structures. Others, like Selection-Inference \cite{Creswell2022SelectionInference}, break reasoning into smaller steps. However, these methods usually treat KGs as static lists of entities and ignore complex logical rules. We propose a Logical Knowledge Graph (LKG) that treats rules and constraints as primary nodes. By combining vector search with Logical Hull Expansion, we ensure implicit axioms are retrieved for the symbolic solver, bridging the gap between semantic search and logical deduction.
+
+
+\section{Methodology}
+
+We propose the Symbolic-Cognitive Logical Knowledge Graph (Symb-LKG) framework. This neuro-symbolic architecture bridges the gap between LLM semantic flexibility and symbolic solver precision. Current methods like Chain-of-Thought (CoT) \cite{wei2022cot} and RAG \cite{Lewis2020retrieval} have improved reasoning. However, they often fail to maintain logical consistency in long contexts or handle arithmetic reliably due to random token generation. Our method solves this by converting unstructured text into a formal graph, making logic explicit and computable. The framework has four key phases: logical knowledge graph construction, topology-aware hybrid retrieval, adaptive logic routing, and verifiable symbolic execution.
+
+\subsection{Logical Knowledge Graph Construction}
+
+Traditional Knowledge Graphs (KGs) model facts as simple triples: $(Subject, Relation, Object)$. They often hide complex logical rules in edge attributes or ignore them completely \cite{ji2021survey,pan2024unifying}. This limits hybrid system reasoning because rules are stored as unstructured text, not graph nodes. This makes them hard to retrieve or use in structural propagation. To fix this, our Logical Knowledge Graph (LKG) treats logical constructs as ``first-class citizens" in the graph structure.
+
+
+We formally define the LKG as a directed, heterogeneous multigraph $G = (V, E, \mathcal{A}, \mathcal{T})$, where $V$ is the set of nodes, $E$ is the set of edges, $\mathcal{A}$ is a set of attributes, and $\mathcal{T}$ represents the node types. The vertex set $V$ is partitioned into four disjoint subsets, as shown in \hyperref[tab:lkg_nodes]{Table1}.
+
+
+\begin{table*}[t]
+\centering
+\caption{Node Taxonomy in the Symbolic-Cognitive Logical Knowledge Graph (Symb-LKG). The schema distinguishes between static entities, hierarchical concepts, deductive rules, and arithmetic constraints to facilitate dynamic solver routing.}
+\label{tab:lkg_nodes}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l c >{\raggedright\arraybackslash}p{6.0cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}p{5.0cm}}
+\toprule
+\multicolumn{1}{c}{\textbf{Node Type}} & 
+\multicolumn{1}{c}{\textbf{Symbol}} & 
+\multicolumn{1}{c}{\textbf{Definition \& Categories (Codebase)}} & 
+\multicolumn{1}{c}{\textbf{Key Attributes (Class Fields)}} & 
+\multicolumn{1}{c}{\textbf{Role in Reasoning}} \\
+\midrule
+
+\textbf{Entity} & $V_E$ & 
+Concrete instances implemented as \texttt{Entity} class. \newline
+IDs are generated via MD5 hash of lemmatized name and type. & 
+\texttt{name}, \texttt{entity\_type}, \newline \texttt{id} (Canonical Hash), \newline \texttt{properties} & 
+Anchors for retrieval. Hash-based IDs ensure uniqueness across the graph. \\
+\addlinespace[0.8em]
+
+\textbf{Concept} & $V_C$ & 
+Abstract categories implemented as \texttt{Concept} class. & 
+\texttt{name}, \texttt{labels} & 
+Simple taxonomy nodes supporting type grouping. \\
+\addlinespace[0.8em]
+
+\textbf{Rule} & $V_R$ & 
+Logical implications implemented as \texttt{Rule} class. & 
+\texttt{expression}, \texttt{description}, \newline \texttt{embedding} & 
+Stores logic formulas; \texttt{description} allows vector-based retrieval of rules. \\
+\addlinespace[0.8em]
+
+\textbf{Constraint} & $V_S$ & 
+Restrictions on states, implemented as 4 subclasses: \newline 
+1. \textbf{Arithmetic} (Math ops) \newline
+2. \textbf{AllDifferent} (Combinatorial) \newline
+3. \textbf{Ordering} (Spatial/Temporal relations like 
+\textit{left\_of}, \textit{newer\_than}) \newline
+4. \textbf{Generic} (Constraints outside the above-listed categories) & 
+\texttt{raw\_expression}, \texttt{constraint\_type}, 
+\newline
+\textit{Specific:} \texttt{relation}, \texttt{operation}, \texttt{value} & 
+Defines solution boundaries. \texttt{Ordering} handles both topological and chronological constraints via relation types. \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
+
+
+In this architecture, a logical dependency is not merely an edge property but a topological structure. Consider a constraint like ``No two people can sit in the same seat." In a traditional KG, this might be lost as unstructured text. In Symb-LKG, this is instantiated as a Constraint Node $v_{c} \in V_S$ of type AllDifferent, connected via [\textit{:APPLIES\_TO}] edges to the Concept Node ``Seat" and the Entity Node ``Person".
+
+This design offers two key advantages. First, it makes logic semantically addressable. Rules get their own vector embeddings $\mathbf{h}{v} \in \mathbb{R}^d$, so the system can find "seating restrictions" directly via semantic search. Second, it separates the T-Box (logical rules) from the A-Box (assertions) \cite{baader2003description}. This keeps the reasoning structure stable even when specific entity data changes.
+
+To build the graph, we use an LLM-based extraction pipeline ($f_{extract}()$) to parse text into structured components. We enforce a strict canonicalization protocol to connect graph parts across documents. Entities are normalized by lemmatization and type checking. Their unique IDs are generated using $\text{ID}(e) = \text{SHA256}(\text{normalize}(e.name) \oplus e.type)$. This maps "The blue book" and "Blue Book" to the same node, preventing duplicates.
+
+\subsection{Hybrid Retrieval and Pruning}
+
+Effective reasoning needs a minimal, sufficient context—a subgraph $G_{sub} \subset G$ with all necessary premises and no noise. Standard dense retrieval often fails due to "semantic drift," fetching related but logically irrelevant data. We solve this with a Topology-Aware Hybrid Retrieval mechanism. It combines vector similarity with graph traversal.
+
+First, we use a dense embedding model (paraphrase-multilingual-MiniLM-L12-v2) \cite{reimers2019sentencebertarxiv} to encode the user query $q$ into a vector $\mathbf{v}q$. Next, we calculate the cosine similarity between $\mathbf{v}_q$ and all node embeddings. Based on this, we select a set of ``anchor nodes":
+\begin{equation}
+    \begin{split}
+        \text{S}_{anchor} &= \{ v \in V \mid \cos(\mathbf{v}_q, \mathbf{h}_v) > \tau_{sim} \} \\
+&\cup \{ v \in V_E \mid \text{exactmatch}(v.name, q) \}
+    \end{split}
+\end{equation}
+
+This dual selection captures both relevant concepts (e.g., ``seating rules") and explicit entities (e.g., ``Alice").
+
+However, semantic search alone is not enough for logic. A rule constraining an entity often lacks shared keywords with that entity. To fix this, we define the Logical Hull of the anchor set. We expand the context by traversing the graph's [:MENTIONS], [:IS\_A], and [:APPLIES\_TO] edges. For each anchor $v \in S_{anchor}$, we include its 1-hop and 2-hop neighbors from the rule set $V_R$ or constraint set $V_S$.
+\begin{equation}
+\begin{split}
+    \text{S}_{tmp} &= \{ u \in V_R \cup V_S \mid \exists v \in S_{anchor}, \text{dist}(u, v) \le k \} \\
+    \text{S}_{hull} &= \text{S}_{anchor} \cup S_{tmp}
+\end{split}
+\end{equation}
+
+This step ensures Logical Completeness. If an entity is retrieved, its related conditions are automatically included. For example, finding "Alice" also pulls in the "AllDifferent" constraint for her group.
+
+The expanded set $S_{hull}$ can be large. To fit the solver's context window, we use an LLM-based pruning module $\Psi$. This module checks if each node is needed to answer $q$ and removes ``distractor" constraints (e.g., rules for a different game). The result is $G_{final} = \Psi(S_{hull}, q)$, a compact, mathematically bounded context for reasoning.
+
+\subsection{Solver Selection via Logic Router}
+
+Real-world logical problems vary widely, so using a single solver is often inefficient. \cite{Lam2024closer} shows that while Z3 \cite{demoura2008z3} excels at arithmetic and combinatorial tasks, it is often less intuitive for pure first-order logic compared to Prover9 \cite{mccune2005release}. To optimize performance, we implement an Adaptive Logic Router. This meta-cognitive module $f_{route}: (G_{final}, q) \rightarrow \Omega$ analyzes the subgraph's structure to select the best solver backend.
+
+
+The router analyzes the structural signature of the retrieved subgraph to select the optimal solver backend.
+
+\textbf{SMT Solver (Z3) Pathway:} Used when $G_{final}$ has many $V_S$ nodes (Constraints), especially for arithmetic or global uniqueness (e.g., CSPs). We leverage Z3's DPLL(T) algorithm \cite{nieuwenhuis2006solving} to efficiently prune large search spaces.
+
+\textbf{Automated Theorem Prover (Prover9) Pathway:} Selected for strict First-Order Logic (FOL) tasks or proof generation. This runs when the subgraph is mostly $V_R$ nodes (Rules) with logical implications but no numbers.
+
+\textbf{Graph Traversal Pathway:} Used for direct relational queries (e.g., "Who is X's father?"). Here, lightweight engines like Pyke are faster and more efficient than heavy solvers.
+
+This adaptive approach ensures robustness. By categorizing the problem, we stop the LLM from trying unreliable arithmetic through token prediction—a known Transformer weakness. Instead, we force the system to delegate computation to symbolic engines designed for mathematical correctness.
+
+
+\subsection{Code Generation}
+
+The final phase connects neural understanding with symbolic execution. We use the LLM as a "Neural-Symbolic Compiler" instead of generating answers directly in natural language.
+
+Given the subgraph $G_{final}$ and solver $\omega$, the model translates the graph into an executable program $C_{code}$.
+For example, in the Z3 pathway, entities $e \in V_E$ become variables ($x = \text{Int}(x)$); concept nodes $V_C$ set domains ($solver.add(0 \le x \le 100)$); and constraint nodes $v_c \in V_S$ become assertions ($solver.add(Distinct(x, y, z))$).
+
+Since our LKG structure maps directly to logical variables and constraints, this translation is structured and verifiable. To ensure reliability, we use a self-refining execution loop. The code $C_{code}$ runs in a sandbox. If it fails (e.g., UnsatError, SyntaxError), we capture the error trace $\epsilon$. A refinement function $C_{code} = \text{Refine}(C_{code}, \epsilon, G_{final})$ then corrects the code based on this feedback. This cycle repeats until success or timeout.
+
+This method turns probabilistic text generation into deterministic computation. The result is a rigorous proof or valid assignment, providing interpretability and trust unattainable with pure neural Chain-of-Thought.
+
+
+% In the unusual situation where you want a paper to appear in the
+% references without citing it in the main text, use \nocite
+\nocite{langley00}
+
+\bibliography{example_paper}
+\bibliographystyle{icml2026}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\appendix
+\onecolumn
+\section{You \emph{can} have an appendix here.}
+
+You can have as much text here as you want. The main body must be at most $8$
+pages long. For the final version, one more page can be added. If you want, you
+can use an appendix like this one.
+
+The $\mathtt{\backslash onecolumn}$ command above can be kept in place if you
+prefer a one-column appendix, or can be removed if you prefer a two-column
+appendix.  Apart from this possible change, the style (font size, spacing,
+margins, page numbering, etc.) should be kept the same as the main body.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
+% This document was modified from the file originally made available by
+% Pat Langley and Andrea Danyluk for ICML-2K. This version was created
+% by Iain Murray in 2018, and modified by Alexandre Bouchard in
+% 2019 and 2021 and by Csaba Szepesvari, Gang Niu and Sivan Sabato in 2022.
+% Modified again in 2023 and 2024 by Sivan Sabato and Jonathan Scarlett.
+% Previous contributors include Dan Roy, Lise Getoor and Tobias
+% Scheffer, which was slightly modified from the 2010 version by
+% Thorsten Joachims & Johannes Fuernkranz, slightly modified from the
+% 2009 version by Kiri Wagstaff and Sam Roweis's 2008 version, which is
+% slightly modified from Prasad Tadepalli's 2007 version which is a
+% lightly changed version of the previous year's version by Andrew
+% Moore, which was in turn edited from those of Kristian Kersting and
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.
