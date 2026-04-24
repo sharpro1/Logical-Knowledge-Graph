@@ -1,0 +1,102 @@
+You will receive a log text and a quesiton text. Analyze their content and output according to the following requirements:
+------
+1.The log text consists of Facts (e.g., A is a girl) and Rules (e.g., Girls have long hair). 
+  When analyzing the log, identify these facts and rules. (This part is not to be output)
+
+2.Analyze the logical relationships depicted in the texts and represent them using First-Order Logic (FOL).
+  Output the FOL expressions in the format and DO NOT include ANY other text, explanations, or responses outside this format:
+
+  Premises:  [This section lists each FOL formula about the rules and facts]
+  Formula1
+  Formula2
+  ...
+  Goal:  [This section lists one conclusion need to be proved according to the quesiton text]
+  Cls
+
+3.The grammar of the first-order logic formula is defined as follows:
+  predicates with single or multiple variables: P(x, y, ...)
+  Note: One symbol CANNOT be used with multiple articles, and do identify the facts and rules, e.g.,
+    For 'Every A is B, every B is C', You can use
+    all x (A(x) -> B(x))
+    all x (B(x) -> C(x))
+    But you CANNOT use
+    B(A)
+    C(B)
+  logical conjunction of expr1 and expr2: expr1 & expr2
+  logical disjunction of expr1 and expr2: expr1 | expr2
+  logical negation of expr1: -expr1
+  expr1 implies expr2: expr1 -> expr2
+  logical universal quantification: all x (expr)
+  logical existential quantification: exists x (expr)
+
+4.The output MUST ONLY represent the logical relationships explicitly in the texts;
+  DO NOT perform logical inference to derive conclusions.
+  For example, if the text contains the information 'A is a girl.' and 'Girls have long hair.', output SHOULD follow the format in point 2, with premises like:
+  IsGirl(A)
+  all x (IsGirl(x) -> HasLongHair(x))
+  It MUST NOT output inferred conclusions like HasLongHair(A).
+
+5.When generating the Goal, DO NOT reverse the logic of the question.
+  For example, for the quesiton 'Is the following statement true or false? A is not a girl.',
+  conclusion SHOULD be '-IsGirl(A)', Not 'IsGirl(A)'
+
+6.Reiteration: The output MUST strictly follow the format specified in point 2, including the "Premises:", and "Goal:" sections,
+  and each section MUST have outputs.
+  It MUST NOT contain any additional text or deviations from this format.
+
+7.IMPORTANT — For True/False/Unknown questions (e.g., FOLIO-style):
+  If the question asks "is the following statement true, false, or uncertain?", you need to help
+  distinguish between FALSE and UNKNOWN. To do this:
+  - Set the Goal to the STATEMENT ITSELF (not its negation).
+  - If the theorem prover proves it → TRUE (A).
+  - If the theorem prover says unprovable, it could mean FALSE or UNKNOWN.
+  To distinguish: also consider whether the NEGATION of the statement is provable.
+  - If the negation is provable → FALSE (B).
+  - If neither the statement nor its negation is provable → UNKNOWN (C).
+  When the question has three options (True/False/Unknown), output TWO goals separated by "---":
+  Goal:
+  statement_to_prove
+  ---
+  NegationGoal:
+  negation_of_statement
+
+------
+Here's a complete example:
+Premises:
+all x (Listed(x) -> -NegativeReviews(x))
+all x (GreaterThanNine(x) -> Listed(x))
+exists x (-TakeOut(x) & NegativeReviews(x))
+all x (Popular(x) -> GreaterThanNine(x))
+(GreaterThanNine(Subway) | Popular(Subway))
+Goal:
+TakeOut(Subway) & -NegativeReviews(Subway)
+
+------
+Below is another example:
+Predicates:
+all x (man(x) -> mortal(x))
+man(socrates)
+Goal:
+mortal(socrates)
+
+------
+Below is another example:
+Predicates:
+all x all y (teaches(x,y) -> knows(x,y))
+all x all y (admires(x,y) -> wants_to_learn_from(x,y))
+all x all y (wants_to_learn_from(x,y) & knows(y,logic) -> seeks_wisdom(x,y))
+teaches(aristotle,logic)
+admires(plato,aristotle)
+Goal:
+seeks_wisdom(plato,aristotle)
+
+------
+Below is another example:
+Predicates:
+all x (Drinks(x) -> Dependent(x))
+all x ((Drinks(x) & -Jokes(x)) | (-Drinks(x) & Jokes(x)))
+all x (Jokes(x) -> -Unaware(x))
+((Student(Rina) & Unaware(Rina) & --(Student(Rina) | Unaware(Rina))) | (-(Student(Rina) & Unaware(Rina)) & -(Student(Rina) | Unaware(Rina))))
+(((-(Dependent(Rina) & Student(Rina)) -> (Dependent(Rina) & Student(Rina))) & --(Dependent(Rina) | Student(Rina))) | (-(-(Dependent(Rina) & Student(Rina)) -> (Dependent(Rina) & Student(Rina))) & -(Dependent(Rina) | Student(Rina))))
+Goal:
+(((Jokes(Rina) & Unaware(Rina) & --(Jokes(Rina) | Unaware(Rina))) | (-(Jokes(Rina) & Unaware(Rina)) & -(Jokes(Rina) | Unaware(Rina)))) -> (Jokes(Rina) & Drinks(Rina)))
